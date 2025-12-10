@@ -14,26 +14,68 @@ import IndexPage from './pages/index';
 import dedent from 'dedent';
 import { lookup as lookupMime } from 'mime-types';
 
-/** 이미지 크기 읽기 */
-function getImageSize(urlObj: URL) {
-  // URL.pathname은 "/static-build/assets/img.png" 같은 형태라 leading "/" 제거 필요
-  const realPath = fileURLToPath(urlObj);
+// @ts-ignore - runtime type check
+function getImageSize(urlObj: URL | string) {
+  let realPath;
+  if (typeof urlObj === 'string') {
+    if (urlObj.startsWith('/c/')) {
+      realPath = path.join(process.cwd(), '.tmp', 'build', 'static', urlObj.substring(1));
+    } else {
+      realPath = urlObj; // Fallback or absolute path
+    }
+  } else {
+    realPath = fileURLToPath(urlObj);
+    if (realPath.startsWith('/c/')) {
+      realPath = path.join(process.cwd(), '.tmp', 'build', 'static', realPath.substring(1));
+    }
+  }
   const buf = fs.readFileSync(realPath);
   return sizeOf(buf);
 }
 
+// @ts-ignore
+function urlToWebPath(urlObj: URL | string) {
+  if (typeof urlObj === 'string') return urlObj;
+  const fullPath = fileURLToPath(urlObj);
+  if (fullPath.startsWith('/c/')) return fullPath;
+
+  // Handle dev path (.tmp/build/static)
+  const tmpStaticIndex = fullPath.indexOf('.tmp/build/static/');
+  if (tmpStaticIndex !== -1) {
+    return '/' + fullPath.substring(tmpStaticIndex + '.tmp/build/static/'.length);
+  }
+  // Handle prod path (static/c...) or fallback
+  const staticIndex = fullPath.indexOf('static/');
+  if (staticIndex !== -1) {
+    return '/' + fullPath.substring(staticIndex + 'static/'.length);
+  }
+  return fullPath;
+}
+
+// @ts-ignore
+function getPathname(urlObj: URL | string) {
+  if (typeof urlObj === 'string') return urlObj;
+  return urlObj.pathname;
+}
+
+import iconLargeMaskable from 'url:./assets/icon-large-maskable.png';
+import iconLarge from 'url:./assets/icon-large.png';
+import screenshot1 from 'url:./assets/screenshot1.png';
+import screenshot2 from 'url:./assets/screenshot2.jpg';
+import screenshot3 from 'url:./assets/screenshot3.jpg';
+import screenshot4 from 'url:./assets/screenshot4.png';
+import screenshot5 from 'url:./assets/screenshot5.jpg';
+import screenshot6 from 'url:./assets/screenshot6.jpg';
+
 const img = {
-  iconLargeMaskable: new URL(
-    './assets/icon-large-maskable.png',
-    import.meta.url,
-  ),
-  iconLarge: new URL('./assets/icon-large.png', import.meta.url),
-  screenshot1: new URL('./assets/screenshot1.png', import.meta.url),
-  screenshot2: new URL('./assets/screenshot2.jpg', import.meta.url),
-  screenshot3: new URL('./assets/screenshot3.jpg', import.meta.url),
-  screenshot4: new URL('./assets/screenshot4.png', import.meta.url),
-  screenshot5: new URL('./assets/screenshot5.jpg', import.meta.url),
-  screenshot6: new URL('./assets/screenshot6.jpg', import.meta.url),
+  iconLargeMaskable,
+  iconLarge,
+  screenshot1,
+  screenshot2,
+  screenshot3,
+  screenshot4,
+  screenshot5,
+  screenshot6,
 };
 
 interface Dimensions {
@@ -59,10 +101,13 @@ async function buildScreenshots() {
     list.map(async (shot) => {
       const dim = getImageSize(shot);
       return {
-        src: shot.href,
-        type: lookupMime(shot.pathname),
+        src: urlToWebPath(shot),
+        type: lookupMime(getPathname(shot)),
         sizes: manifestSize(dim),
         form_factor: formFactor(dim),
+        label: `Demo image: ${(lookupMime(getPathname(shot)) || '')
+          .split('/')[1]
+          .toUpperCase()}`,
       };
     }),
   );
@@ -74,13 +119,13 @@ async function buildIcons() {
 
   return {
     large: {
-      src: img.iconLarge.href,
-      type: lookupMime(img.iconLarge.pathname),
+      src: urlToWebPath(img.iconLarge),
+      type: lookupMime(getPathname(img.iconLarge)),
       sizes: manifestSize(large),
     },
     maskable: {
-      src: img.iconLargeMaskable.href,
-      type: lookupMime(img.iconLargeMaskable.pathname),
+      src: urlToWebPath(img.iconLargeMaskable),
+      type: lookupMime(getPathname(img.iconLargeMaskable)),
       sizes: manifestSize(maskable),
       purpose: 'maskable',
     },

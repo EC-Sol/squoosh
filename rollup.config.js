@@ -150,6 +150,7 @@ export default async function ({ watch }) {
         resolveFileUrl,
       ),
       ...commonPlugins(),
+      { resolveFileUrl },
       importMetaAssets(),
       emitFiles({ include: '**/*', root: path.join(__dirname, 'src', 'copy') }),
       nodeExternalPlugin(),
