@@ -307,8 +307,8 @@ export default class Compress extends Component<Props, State> {
             latestSettings: {
               processorState: defaultProcessorState,
               encoderState: {
-                type: 'mozJPEG',
-                options: encoderMap.mozJPEG.meta.defaultOptions,
+                type: 'webP',
+                options: encoderMap.webP.meta.defaultOptions,
               },
             },
             loading: false,

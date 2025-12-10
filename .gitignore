@@ -3,6 +3,7 @@ node_modules
 *.scss.d.ts
 *.css.d.ts
 build
+dist
 *.o
 .DS_Store
 
@@ -10,3 +11,6 @@ build
 src/features-worker/index.ts
 src/client/lazy-app/worker-bridge/meta.ts
 src/client/lazy-app/feature-meta/index.ts
+
+# IDE
+.idea
