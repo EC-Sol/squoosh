@@ -1,8 +1,14 @@
 {
   "extends": "./generic-tsconfig.json",
   "compilerOptions": {
-    "lib": ["esnext", "dom", "dom.iterable"],
-    "types": []
+    "composite": true,
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
+    "types": [],
+    "outDir": ".tmp/tsc-output"
   },
   "include": [
     "src/features/**/client/**/*",
@@ -10,8 +16,6 @@
     "src/features/client-utils/**/*",
     "src/shared/**/*",
     "src/client/**/*",
-    // Not really clean, but we need these to access the type of the functions
-    // for comlink
     "src/features/**/worker/**/*",
     "src/features-worker/**/*",
     "src/features/worker-utils/**/*",

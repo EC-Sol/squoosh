@@ -1,8 +1,19 @@
 {
   "extends": "./generic-tsconfig.json",
   "compilerOptions": {
-    "lib": ["esnext", "dom", "dom.iterable"],
-    "types": ["node"]
+    "composite": true,
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable"
+    ],
+    "types": [
+      "node"
+    ],
+    "outDir": ".tmp/tsc-output"
   },
-  "include": ["src/shared/**/*", "src/static-build/**/*"]
+  "include": [
+    "src/shared/**/*",
+    "src/static-build/**/*"
+  ]
 }

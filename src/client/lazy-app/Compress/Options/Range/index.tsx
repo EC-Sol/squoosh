@@ -5,7 +5,14 @@ import RangeInputElement from './custom-els/RangeInput';
 import './custom-els/RangeInput';
 import { linkRef } from 'shared/prerendered-app/util';
 
-interface Props extends preact.JSX.HTMLAttributes {}
+interface Props extends preact.JSX.HTMLAttributes<HTMLInputElement> {
+  min?: string | number;
+  max?: string | number;
+  step?: string | number;
+  value?: string | number;
+  name?: string;
+  onInput?: (event: Event) => void;
+}
 interface State {
   textFocused: boolean;
 }

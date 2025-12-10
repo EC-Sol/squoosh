@@ -4,6 +4,8 @@ node_modules
 *.css.d.ts
 build
 dist
+.rollup.cache
+.yarn
 *.o
 .DS_Store
 
@@ -14,3 +16,4 @@ src/client/lazy-app/feature-meta/index.ts
 
 # IDE
 .idea
+.tmp/

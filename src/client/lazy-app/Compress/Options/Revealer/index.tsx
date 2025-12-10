@@ -3,8 +3,11 @@ import * as style from './style.css';
 import 'add-css:./style.css';
 import { Arrow } from '../../../icons';
 
-interface Props extends preact.JSX.HTMLAttributes {}
-interface State {}
+interface Props extends preact.JSX.HTMLAttributes<HTMLInputElement> {
+  checked?: boolean;
+  onChange?: (event: Event) => void;
+}
+interface State { }
 
 export default class Revealer extends Component<Props, State> {
   render(props: Props) {

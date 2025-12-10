@@ -1,9 +1,42 @@
 {
+  "declaration": false,
+  "declarationDir": null,
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "allowJs": true,
+    "checkJs": false,
+    "isolatedModules": true,
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "target": "es2020",
+    "moduleResolution": "node",
+    "outDir": ".tmp/tsc-output"
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "src/sw",
+    "src/copy"
+  ],
   "extends": "./generic-tsconfig.json",
   "files": [],
   "references": [
-    { "path": "./client-tsconfig.json" },
-    { "path": "./worker-tsconfig.json" },
-    { "path": "./static-build-tsconfig.json" }
+    {
+      "path": "./client-tsconfig.json"
+    },
+    {
+      "path": "./worker-tsconfig.json"
+    },
+    {
+      "path": "./static-build-tsconfig.json"
+    },
+    {
+      "path": "./sw-tsconfig.json"
+    }
   ]
 }

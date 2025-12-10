@@ -1,29 +1,40 @@
 /**
- * Copyright 2020 Google Inc. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2020 Google
+ * Licensed under the Apache License, Version 2.0
  */
 import { h } from 'preact';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import sizeOf from 'image-size';
 
 import { renderPage, writeFiles } from './utils';
 import IndexPage from './pages/index';
-import * as iconLargeMaskable from 'img-url:static-build/assets/icon-large-maskable.png';
-import * as iconLarge from 'img-url:static-build/assets/icon-large.png';
-import * as screenshot1 from 'img-url:static-build/assets/screenshot1.png';
-import * as screenshot2 from 'img-url:static-build/assets/screenshot2.jpg';
-import * as screenshot3 from 'img-url:static-build/assets/screenshot3.jpg';
-import * as screenshot4 from 'img-url:static-build/assets/screenshot4.png';
-import * as screenshot5 from 'img-url:static-build/assets/screenshot5.jpg';
-import * as screenshot6 from 'img-url:static-build/assets/screenshot6.jpg';
+
 import dedent from 'dedent';
 import { lookup as lookupMime } from 'mime-types';
+
+/** 이미지 크기 읽기 */
+function getImageSize(urlObj: URL) {
+  // URL.pathname은 "/static-build/assets/img.png" 같은 형태라 leading "/" 제거 필요
+  const realPath = fileURLToPath(urlObj);
+  const buf = fs.readFileSync(realPath);
+  return sizeOf(buf);
+}
+
+const img = {
+  iconLargeMaskable: new URL(
+    './assets/icon-large-maskable.png',
+    import.meta.url,
+  ),
+  iconLarge: new URL('./assets/icon-large.png', import.meta.url),
+  screenshot1: new URL('./assets/screenshot1.png', import.meta.url),
+  screenshot2: new URL('./assets/screenshot2.jpg', import.meta.url),
+  screenshot3: new URL('./assets/screenshot3.jpg', import.meta.url),
+  screenshot4: new URL('./assets/screenshot4.png', import.meta.url),
+  screenshot5: new URL('./assets/screenshot5.jpg', import.meta.url),
+  screenshot6: new URL('./assets/screenshot6.jpg', import.meta.url),
+};
 
 interface Dimensions {
   width: number;
@@ -34,79 +45,99 @@ const manifestSize = ({ width, height }: Dimensions) => `${width}x${height}`;
 const formFactor = ({ width, height }: Dimensions) =>
   width > height ? 'wide' : 'narrow';
 
-const screenshots = [
-  screenshot1,
-  screenshot2,
-  screenshot3,
-  screenshot4,
-  screenshot5,
-  screenshot6,
-].map((screenshot) => ({
-  src: screenshot.default,
-  type: lookupMime(screenshot.default),
-  sizes: manifestSize(screenshot),
-  form_factor: formFactor(screenshot),
-}));
+async function buildScreenshots() {
+  const list = [
+    img.screenshot1,
+    img.screenshot2,
+    img.screenshot3,
+    img.screenshot4,
+    img.screenshot5,
+    img.screenshot6,
+  ];
 
-interface Output {
-  [outputPath: string]: string;
+  return Promise.all(
+    list.map(async (shot) => {
+      const dim = getImageSize(shot);
+      return {
+        src: shot.href,
+        type: lookupMime(shot.pathname),
+        sizes: manifestSize(dim),
+        form_factor: formFactor(dim),
+      };
+    }),
+  );
 }
 
-const toOutput: Output = {
-  'index.html': renderPage(<IndexPage />),
-  'manifest.json': JSON.stringify({
-    name: 'Squoosh',
-    short_name: 'Squoosh',
-    start_url: '/?utm_medium=PWA&utm_source=launcher',
-    display: 'standalone',
-    orientation: 'any',
-    background_color: '#fff',
-    theme_color: '#ff3385',
-    icons: [
-      {
-        src: iconLarge.default,
-        type: lookupMime(iconLarge.default),
-        sizes: manifestSize(iconLarge),
-      },
-      {
-        src: iconLargeMaskable.default,
-        type: lookupMime(iconLargeMaskable.default),
-        sizes: manifestSize(iconLargeMaskable),
-        purpose: 'maskable',
-      },
-    ],
-    description:
-      'Compress and compare images with different codecs, right in your browser.',
-    lang: 'en',
-    categories: ['photo', 'productivity', 'utilities'],
-    screenshots,
-    share_target: {
-      action: '/?utm_medium=PWA&utm_source=share-target&share-target',
-      method: 'POST',
-      enctype: 'multipart/form-data',
-      params: {
-        files: [
-          {
-            name: 'file',
-            accept: ['image/*'],
-          },
-        ],
-      },
+async function buildIcons() {
+  const large = getImageSize(img.iconLarge);
+  const maskable = getImageSize(img.iconLargeMaskable);
+
+  return {
+    large: {
+      src: img.iconLarge.href,
+      type: lookupMime(img.iconLarge.pathname),
+      sizes: manifestSize(large),
     },
-  }),
-  _headers: dedent`
-    /*
-      Cache-Control: no-cache
+    maskable: {
+      src: img.iconLargeMaskable.href,
+      type: lookupMime(img.iconLargeMaskable.pathname),
+      sizes: manifestSize(maskable),
+      purpose: 'maskable',
+    },
+  };
+}
 
-    # I don't think Rollup is cache-busting files correctly.
-    #/c/*
-    #  Cache-Control: max-age=31536000
+async function main() {
+  const screenshots = await buildScreenshots();
+  const icons = await buildIcons();
 
-    # COOP+COEP for WebAssembly threads.
-    /*
-      Cross-Origin-Embedder-Policy: require-corp
-      Cross-Origin-Opener-Policy: same-origin
-  `,
-};
+  const toOutput = {
+    'index.html': renderPage(<IndexPage />),
 
-writeFiles(toOutput);
+    'manifest.json': JSON.stringify({
+      name: 'Squoosh',
+      short_name: 'Squoosh',
+      start_url: '/?utm_medium=PWA&utm_source=launcher',
+      display: 'standalone',
+      orientation: 'any',
+      background_color: '#fff',
+      theme_color: '#ff3385',
+
+      icons: [icons.large, icons.maskable],
+
+      description:
+        'Compress and compare images with different codecs, right in your browser.',
+      lang: 'en',
+      categories: ['photo', 'productivity', 'utilities'],
+      screenshots,
+
+      share_target: {
+        action: '/?utm_medium=PWA&utm_source=share-target&share-target',
+        method: 'POST',
+        enctype: 'multipart/form-data',
+        params: {
+          files: [
+            {
+              name: 'file',
+              accept: ['image/*'],
+            },
+          ],
+        },
+      },
+    }),
+
+    _headers: dedent`
+      /*
+        Cache-Control: no-cache
+
+      # COOP+COEP for WebAssembly threads.
+      /*
+        Cross-Origin-Embedder-Policy: require-corp
+        Cross-Origin-Opener-Policy: same-origin
+    `,
+  };
+
+  writeFiles(toOutput);
+}
+
+main();

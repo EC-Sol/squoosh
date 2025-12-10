@@ -34,6 +34,16 @@ declare module 'omt:*' {
   export default value;
 }
 
+declare module 'client-bundle:*' {
+  const value: string;
+  export default value;
+}
+
+declare module 'worker:*' {
+  const value: string;
+  export default value;
+}
+
 declare module 'css:*' {
   const source: string;
   export default source;

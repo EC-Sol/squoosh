@@ -1,14 +1,21 @@
 {
   "extends": "./generic-tsconfig.json",
   "compilerOptions": {
-    "lib": ["webworker", "esnext"]
+    "composite": true,
+    "lib": [
+      "webworker",
+      "esnext"
+    ],
+    "outDir": ".tmp/tsc-output"
   },
   "include": [
     "src/features/**/worker/**/*",
     "src/features/**/shared/**/*",
     "src/features/worker-utils/**/*",
     "src/features-worker/**/*",
-    "src/worker-shared/**/*",
-    "src/sw/**/*"
+    "src/worker-shared/**/*"
+  ],
+  "exclude": [
+    "src/sw"
   ]
 }

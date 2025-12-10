@@ -29,12 +29,12 @@ export default async function process(
   const result = opts.zx
     ? module.zx_quantize(data.data, data.width, data.height, opts.dither)
     : module.quantize(
-        data.data,
-        data.width,
-        data.height,
-        opts.maxNumColors,
-        opts.dither,
-      );
+      data.data,
+      data.width,
+      data.height,
+      opts.maxNumColors,
+      opts.dither,
+    );
 
-  return new ImageData(result, data.width, data.height);
+  return new ImageData(result as any, data.width, data.height);
 }

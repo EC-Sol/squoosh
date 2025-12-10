@@ -81,7 +81,7 @@ async function hqx(
   );
 
   return new ImageData(
-    new Uint8ClampedArray(result.buffer),
+    new Uint8ClampedArray(result.buffer as any),
     input.width * factor,
     input.height * factor,
   );
@@ -133,7 +133,7 @@ export default async function resize(
   );
 
   return new ImageData(
-    new Uint8ClampedArray(result.buffer),
+    new Uint8ClampedArray(result.buffer as any),
     opts.width,
     opts.height,
   );

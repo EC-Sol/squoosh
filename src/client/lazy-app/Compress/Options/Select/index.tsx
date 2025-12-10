@@ -3,10 +3,13 @@ import * as style from './style.css';
 import 'add-css:./style.css';
 import { Arrow } from 'client/lazy-app/icons';
 
-interface Props extends preact.JSX.HTMLAttributes {
+interface Props extends preact.JSX.HTMLAttributes<HTMLSelectElement> {
   large?: boolean;
+  name?: string;
+  value?: string | number;
+  onChange?: (event: Event) => void;
 }
-interface State {}
+interface State { }
 
 export default class Select extends Component<Props, State> {
   render(props: Props) {

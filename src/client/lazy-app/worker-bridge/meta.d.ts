@@ -1,0 +1,33 @@
+import type resize from '../../../features/processors/resize/worker/resize';
+import type quantize from '../../../features/processors/quantize/worker/quantize';
+import type rotate from '../../../features/preprocessors/rotate/worker/rotate';
+import type webpDecode from '../../../features/decoders/webp/worker/webpDecode';
+import type wp2Decode from '../../../features/decoders/wp2/worker/wp2Decode';
+import type qoiDecode from '../../../features/decoders/qoi/worker/qoiDecode';
+import type jxlDecode from '../../../features/decoders/jxl/worker/jxlDecode';
+import type avifDecode from '../../../features/decoders/avif/worker/avifDecode';
+import type wp2Encode from '../../../features/encoders/wp2/worker/wp2Encode';
+import type webpEncode from '../../../features/encoders/webP/worker/webpEncode';
+import type qoiEncode from '../../../features/encoders/qoi/worker/qoiEncode';
+import type oxipngEncode from '../../../features/encoders/oxiPNG/worker/oxipngEncode';
+import type mozjpegEncode from '../../../features/encoders/mozJPEG/worker/mozjpegEncode';
+import type jxlEncode from '../../../features/encoders/jxl/worker/jxlEncode';
+import type avifEncode from '../../../features/encoders/avif/worker/avifEncode';
+export declare const methodNames: readonly ["resize", "quantize", "rotate", "webpDecode", "wp2Decode", "qoiDecode", "jxlDecode", "avifDecode", "wp2Encode", "webpEncode", "qoiEncode", "oxipngEncode", "mozjpegEncode", "jxlEncode", "avifEncode"];
+export interface BridgeMethods {
+    resize(signal: AbortSignal, ...args: Parameters<typeof resize>): Promise<ReturnType<typeof resize>>;
+    quantize(signal: AbortSignal, ...args: Parameters<typeof quantize>): Promise<ReturnType<typeof quantize>>;
+    rotate(signal: AbortSignal, ...args: Parameters<typeof rotate>): Promise<ReturnType<typeof rotate>>;
+    webpDecode(signal: AbortSignal, ...args: Parameters<typeof webpDecode>): Promise<ReturnType<typeof webpDecode>>;
+    wp2Decode(signal: AbortSignal, ...args: Parameters<typeof wp2Decode>): Promise<ReturnType<typeof wp2Decode>>;
+    qoiDecode(signal: AbortSignal, ...args: Parameters<typeof qoiDecode>): Promise<ReturnType<typeof qoiDecode>>;
+    jxlDecode(signal: AbortSignal, ...args: Parameters<typeof jxlDecode>): Promise<ReturnType<typeof jxlDecode>>;
+    avifDecode(signal: AbortSignal, ...args: Parameters<typeof avifDecode>): Promise<ReturnType<typeof avifDecode>>;
+    wp2Encode(signal: AbortSignal, ...args: Parameters<typeof wp2Encode>): Promise<ReturnType<typeof wp2Encode>>;
+    webpEncode(signal: AbortSignal, ...args: Parameters<typeof webpEncode>): Promise<ReturnType<typeof webpEncode>>;
+    qoiEncode(signal: AbortSignal, ...args: Parameters<typeof qoiEncode>): Promise<ReturnType<typeof qoiEncode>>;
+    oxipngEncode(signal: AbortSignal, ...args: Parameters<typeof oxipngEncode>): Promise<ReturnType<typeof oxipngEncode>>;
+    mozjpegEncode(signal: AbortSignal, ...args: Parameters<typeof mozjpegEncode>): Promise<ReturnType<typeof mozjpegEncode>>;
+    jxlEncode(signal: AbortSignal, ...args: Parameters<typeof jxlEncode>): Promise<ReturnType<typeof jxlEncode>>;
+    avifEncode(signal: AbortSignal, ...args: Parameters<typeof avifEncode>): Promise<ReturnType<typeof avifEncode>>;
+}

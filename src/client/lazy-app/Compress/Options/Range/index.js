@@ -1,0 +1,33 @@
+import { jsx as _jsx, jsxs as _jsxs } from "preact/jsx-runtime";
+import { Component } from 'preact';
+import * as style from './style.css';
+import 'add-css:./style.css';
+import './custom-els/RangeInput';
+import { linkRef } from 'shared/prerendered-app/util';
+export default class Range extends Component {
+    constructor() {
+        super(...arguments);
+        this.onTextInput = (event) => {
+            const input = event.target;
+            const value = input.value.trim();
+            if (!value)
+                return;
+            this.rangeWc.value = input.value;
+            this.rangeWc.dispatchEvent(new InputEvent('input', {
+                bubbles: event.bubbles,
+            }));
+        };
+        this.onTextFocus = () => {
+            this.setState({ textFocused: true });
+        };
+        this.onTextBlur = () => {
+            this.setState({ textFocused: false });
+        };
+    }
+    render(props, state) {
+        const { children, ...otherProps } = props;
+        const { value, min, max, step } = props;
+        const textValue = state.textFocused ? this.inputEl.value : value;
+        return (_jsxs("label", { class: style.range, children: [_jsx("span", { class: style.labelText, children: children }), _jsx("div", { class: style.rangeWcContainer, children: _jsx("range-input", { ref: linkRef(this, 'rangeWc'), class: style.rangeWc, ...otherProps }) }), _jsx("input", { ref: linkRef(this, 'inputEl'), type: "number", class: style.textInput, value: textValue, min: min, max: max, step: step, onInput: this.onTextInput, onFocus: this.onTextFocus, onBlur: this.onTextBlur })] }));
+    }
+}
